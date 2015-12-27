@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Normal Distribution Shiny Application</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Normal Distribution Shiny Application">
+  <meta name="author" content="jdhuffaker">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="http://slidifylibraries2.googlecode.com/git/inst/libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/interactive/css/aceeditor.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/js/slides" 
+    src="http://slidifylibraries2.googlecode.com/git/inst/libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Normal Distribution Shiny Application</h1>
+    <h2>12/26/2015</h2>
+    <p>jdhuffaker<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Normal Distribution Shiny Application</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This application allows the user to enter the following:</p>
+
+<ol>
+<li>Mean (from 0 to 100), </li>
+<li>Standard deviation (from 1 to 10), and </li>
+<li>Sample size, n, using a slider (from 30 to 200). </li>
+</ol>
+
+<p>The output will include:</p>
+
+<ol>
+<li>A coefficient of variation estimate generated from the entered mean and stdev and</li>
+<li>A histogram of a random sample of n values generated from the specified mean, stdev, and sample size.</li>
+</ol>
+
+<p>Note: The histogram will have an overlaid normal density function.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    <p>The ui.R file looks like this:</p>
+
+<pre><code class="r">library(shiny)
+
+shinyUI(fluidPage(
+    numericInput(inputId=&#39;Mean&#39;, &#39;Enter the mean (values from 0 to 100):&#39;, 50, 
+                 min = 0, max = 100, step = 1),
+    numericInput(inputId=&#39;Stdev&#39;, &#39;Enter the standard deviation (values from 1 to 10):&#39;, 5, 
+                 min = 1, max = 10, step = 1),
+    h4(&#39;Coefficient of Variation = Stdev/Mean*100:&#39;),
+    verbatimTextOutput(&quot;CoV&quot;),
+    sliderInput(inputId=&quot;num&quot;,
+                label=&quot;Choose a sample size n (from 30 to 200)&quot;,
+                value=50,min=30,max=200),
+
+    plotOutput(&quot;hist&quot;)
+))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    <p>The server.R file looks like this:</p>
+
+<pre><code class="r">library(shiny)
+
+covar &lt;- function(Mean,Stdev) {round(Stdev/Mean*100,2)}
+
+shinyServer(function(input,output){
+    output$CoV &lt;- renderPrint({covar(input$Mean,input$Stdev)})
+    output$hist &lt;- renderPlot({
+        title &lt;- &quot;Histogram of n random normal values&quot;
+        hist(rnorm(input$num, mean=input$Mean, sd=input$Stdev),xlab=&quot;Values&quot;,
+             col=&quot;green&quot;,main=title,prob=TRUE)
+        curve(dnorm(x, mean=input$Mean, sd=input$Stdev), add=TRUE)
+    })
+})
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <article data-timings="">
+    <p>See the following links to run the application:</p>
+
+<p><a href="https://www.shinyapps.io/admin/#/application/75467">https://www.shinyapps.io/admin/#/application/75467</a></p>
+
+<p><a href="https://jdhuffaker.shinyapps.io/JHU_Developing_Data_Products_Project2">https://jdhuffaker.shinyapps.io/JHU_Developing_Data_Products_Project2</a></p>
+
+<p>For a mean of 50, stdev of 5, and sample size of 50, the output looks like this:</p>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-3"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Normal Distribution Shiny Application'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='NA'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='NA'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='NA'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  <script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/interactive/js/ace/js/ace.js"></script>
+<script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/interactive/js/opencpu-0.5.js"></script>
+<script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/widgets/interactive/js/interactive.js"></script>
+
+  <script src="shared/shiny.js" type="text/javascript"></script>
+  <script src="shared/slider/js/jquery.slider.min.js"></script>
+  <script src="shared/bootstrap/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="shared/slider/css/jquery.slider.min.css"></link>
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="http://slidifylibraries2.googlecode.com/git/inst/libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
