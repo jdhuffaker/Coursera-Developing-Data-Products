@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Normal Distribution Shiny Application</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Normal Distribution Shiny Application">
+  <meta name="author" content="jdhuffaker">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/interactive/css/aceeditor.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Normal Distribution Shiny Application</h1>
+    <h2>12/26/2015</h2>
+    <p>jdhuffaker<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Normal Distribution Shiny Application</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This application allows the user to enter the following:</p>
+
+<ol>
+<li>Mean (from 0 to 100), </li>
+<li>Standard deviation (from 1 to 10), and </li>
+<li>Sample size, n, using a slider (from 30 to 200). </li>
+</ol>
+
+<p>The output will include:</p>
+
+<ol>
+<li>A coefficient of variation estimate generated from the entered mean and stdev and</li>
+<li>A histogram of a random sample of n values generated from the specified mean, stdev, and sample size.</li>
+</ol>
+
+<p>Note: The histogram will have an overlaid normal density function.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    <p>The ui.R file looks like this:</p>
+
+<pre><code class="r">library(shiny)
+
+shinyUI(fluidPage(
+    numericInput(inputId=&#39;Mean&#39;, &#39;Enter the mean (values from 0 to 100):&#39;, 50, 
+                 min = 0, max = 100, step = 1),
+    numericInput(inputId=&#39;Stdev&#39;, &#39;Enter the standard deviation (values from 1 to 10):&#39;, 5, 
+                 min = 1, max = 10, step = 1),
+    h4(&#39;Coefficient of Variation = Stdev/Mean*100:&#39;),
+    verbatimTextOutput(&quot;CoV&quot;),
+    sliderInput(inputId=&quot;num&quot;,
+                label=&quot;Choose a sample size n (from 30 to 200)&quot;,
+                value=50,min=30,max=200),
+
+    plotOutput(&quot;hist&quot;)
+))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    <p>The server.R file looks like this:</p>
+
+<pre><code class="r">library(shiny)
+
+covar &lt;- function(Mean,Stdev) {round(Stdev/Mean*100,2)}
+
+shinyServer(function(input,output){
+    output$CoV &lt;- renderPrint({covar(input$Mean,input$Stdev)})
+    output$hist &lt;- renderPlot({
+        title &lt;- &quot;Histogram of n random normal values&quot;
+        hist(rnorm(input$num, mean=input$Mean, sd=input$Stdev),xlab=&quot;Values&quot;,
+             col=&quot;green&quot;,main=title,prob=TRUE)
+        curve(dnorm(x, mean=input$Mean, sd=input$Stdev), add=TRUE)
+    })
+})
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <article data-timings="">
+    <p>See the following links to run the application:</p>
+
+<p><a href="https://www.shinyapps.io/admin/#/application/75467">https://www.shinyapps.io/admin/#/application/75467</a></p>
+
+<p><a href="https://jdhuffaker.shinyapps.io/JHU_Developing_Data_Products_Project2">https://jdhuffaker.shinyapps.io/JHU_Developing_Data_Products_Project2</a></p>
+
+<p>For a mean of 50, stdev of 5, and sample size of 50, the output looks like this:</p>
+
+<p><img src="assets/fig/unnamed-chunk-3-1.png" alt="plot of chunk unnamed-chunk-3"> </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Normal Distribution Shiny Application'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='NA'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='NA'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='NA'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  <script src="libraries/widgets/interactive/js/ace/js/ace.js"></script>
+<script src="libraries/widgets/interactive/js/opencpu-0.5.js"></script>
+<script src="libraries/widgets/interactive/js/interactive.js"></script>
+
+  <script src="shared/shiny.js" type="text/javascript"></script>
+  <script src="shared/slider/js/jquery.slider.min.js"></script>
+  <script src="shared/bootstrap/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="shared/slider/css/jquery.slider.min.css"></link>
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
